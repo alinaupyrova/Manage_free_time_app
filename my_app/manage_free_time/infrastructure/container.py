@@ -4,7 +4,7 @@
 from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Factory, Singleton
 
-from airportapi.infrastructure.repositories.airportmock import \
+from manage_free_time.infrastructure.repositories.airportmock import \
     AirportMockRepository
 from airportapi.infrastructure.repositories.continentmock import \
     ContinentRepository

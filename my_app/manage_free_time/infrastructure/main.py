@@ -10,13 +10,13 @@ from airportapi.api.routers.country import router as country_router
 
 container = Container()
 container.wire(modules=[
-    "airportapi.api.routers.continent",
-    "airportapi.api.routers.country",
-    "airportapi.api.routers.airport",
+    "manage_free_time.api.routers.idea",
+    "manage_free_time.api.routers.country",
+    "manage_free_time.api.routers.airport",
 ])
 
 app = FastAPI()
-app.include_router(airport_router, prefix="/airport")
+app.include_router(idea_router, prefix="/airport")
 app.include_router(continent_router, prefix="/continent")
 app.include_router(country_router, prefix="/country")
 

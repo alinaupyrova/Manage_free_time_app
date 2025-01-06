@@ -1,137 +1,93 @@
-"""Module containing manage_free_time repository abstractions."""
-
-from abc import ABC, abstractmethod
-from typing import Iterable
-
+from typing import Iterable, Optional
 from manage_free_time.core.domain.idea import Idea, IdeaIn
+from manage_free_time.core.repositories.iidea import IIdeaRepository
+from manage_free_time.infrastructure.services.idea import IIdeaService
 
 
-class IAirportRepository(ABC):
-    """An abstract class representing protocol of continent repository."""
+class IdeaService(IIdeaService):
+    """A class implementing the idea service."""
 
-    @abstractmethod
-    async def get_all_airports(self) -> Iterable[Idea]:
-        """The abstract getting all airports from the data storage.
+    _repository: IIdeaRepository
+
+    def __init__(self, repository: IIdeaRepository) -> None:
+        """The initializer of the `IdeaService`.
+
+        Args:
+            repository (IIdeaRepository): The reference to the repository.
+        """
+        self._repository = repository
+
+    async def get_random_idea(self, category: Optional[str] = None) -> Optional[Idea]:
+        """The method getting a random idea.
+
+        Args:
+            category (Optional[str]): The category of the idea (optional).
 
         Returns:
-            Iterable[Airport]: Airports in the data storage.
+            Optional[Idea]: A random idea or None if no idea found.
         """
+        return await self._repository.get_random_idea(category=category)
 
-    @abstractmethod
-    async def get_by_country(self, country_id: int) -> Iterable[Idea]:
-        """The abstract getting airports assigned to particular country.
-
-        Args:
-            country_id (int): The id of the country.
+    async def get_all_ideas(self) -> Iterable[Idea]:
+        """The method getting all ideas.
 
         Returns:
-            Iterable[Airport]: Airports assigned to a country.
+            Iterable[Idea]: Collection of all ideas.
         """
+        return await self._repository.get_all_ideas()
 
-    @abstractmethod
-    async def get_by_continent(self, continent_id: int) -> Iterable[Idea]:
-        """The abstract getting airports assigned to particular continent.
+    async def get_ideas_by_category(self, category: str) -> Iterable[Idea]:
+        """The method getting ideas filtered by category.
 
         Args:
-            continent_id (int): The id of the continent.
+            category (str): The category name.
 
         Returns:
-            Iterable[Airport]: Airports assigned to a continent.
+            Iterable[Idea]: Collection of ideas for the category.
         """
+        return await self._repository.get_ideas_by_category(category)
 
-    @abstractmethod
-    async def get_by_id(self, airport_id: int) -> Idea | None:
-        """The abstract getting airport by provided id.
+    async def add_idea(self, data: IdeaIn) -> Idea:
+        """The method adding a new idea.
 
         Args:
-            airport_id (int): The id of the airport.
+            data (IdeaIn): Details of the new idea.
 
         Returns:
-            Airport | None: The airport details.
+            Idea: The newly added idea.
         """
+        return await self._repository.add_idea(data)
 
-    @abstractmethod
-    async def get_by_icao(self, icao_code: str) -> Idea | None:
-        """The abstract getting airport by provided ICAO code.
+    async def update_idea(self, idea_id: int, data: IdeaIn) -> Optional[Idea]:
+        """The method updating an existing idea.
 
         Args:
-            icao_code (str): The ICAO code of the airport.
+            idea_id (int): The ID of the idea to update.
+            data (IdeaIn): The updated idea data.
 
         Returns:
-            Airport | None: The airport details.
+            Optional[Idea]: The updated idea or None if not found.
         """
+        return await self._repository.update_idea(idea_id=idea_id, data=data)
 
-    @abstractmethod
-    async def get_by_iata(self, iata_code: str) -> Idea| None:
-        """The abstract getting airport by provided IATA code.
+    async def delete_idea(self, idea_id: int) -> bool:
+        """The method deleting an idea.
 
         Args:
-            icao_code (str): The IATA code of the airport.
-
-        Returns:
-            Airport | None: The airport details.
-        """
-
-    @abstractmethod
-    async def get_by_user(self, user_id: int) -> Iterable[Idea]:
-        """The abstract getting airports by user who added them.
-
-        Args:
-            user_id (int): The id of the user.
-
-        Returns:
-            Iterable[Airport]: The airport collection.
-        """
-
-    @abstractmethod
-    async def get_by_location(
-        self,
-        latitude: float,
-        longitude: float,
-        radius: float,
-    ) -> Iterable[Idea]:
-        """The abstract getting airports by raduis of the provided location.
-
-        Args:
-            latitude (float): The geographical latitude.
-            longitude (float): The geographical longitude.
-            radius (float): The radius airports to search.
-
-        Returns:
-            Iterable[Airport]: The result airport collection.
-        """
-
-    @abstractmethod
-    async def add_airport(self, data: IdeaIn) -> None:
-        """The abstract adding new airport to the data storage.
-
-        Args:
-            data (AirportIn): The details of the new airport.
-        """
-
-    @abstractmethod
-    async def update_airport(
-        self,
-        airport_id: int,
-        data: IdeaIn,
-    ) -> Idea| None:
-        """The abstract updating airport data in the data storage.
-
-        Args:
-            airport_id (int): The id of the airport.
-            data (AirportIn): The details of the updated airport.
-
-        Returns:
-            Airport | None: The updated airport details.
-        """
-
-    @abstractmethod
-    async def delete_airport(self, airport_id: int) -> bool:
-        """The abstract updating removing airport from the data storage.
-
-        Args:
-            airport_id (int): The id of the airport.
+            idea_id (int): The ID of the idea to delete.
 
         Returns:
             bool: Success of the operation.
         """
+        return await self._repository.delete_idea(idea_id)
+
+    async def get_ideas_by_user(self, user_id: int) -> Iterable[Idea]:
+        """The method fetching ideas created by a specific user.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            Iterable[Idea]: Collection of ideas created by the user.
+        """
+        return await self._repository.get_ideas_by_user(user_id)

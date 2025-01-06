@@ -6,7 +6,7 @@ class WeeklyPlan(BaseModel):
     user_id: int
     week_start_date: str
     week_end_date: str
-    ideas_ids: List[int]  # Lista ID pomysłów wybranych na ten tydzień
+    ideas_ids: List[int]
 
 class WeeklyPlanIn(BaseModel):
     week_start_date: str
